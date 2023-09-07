@@ -13,7 +13,7 @@ namespace School_classes
 
         public Person(string name) 
         {
-            this.name = name;
+            this.Name = name;
         }
 
         public string Name 

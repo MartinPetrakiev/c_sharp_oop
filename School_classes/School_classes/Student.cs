@@ -1,6 +1,6 @@
 ﻿namespace School_classes
 {
-    internal class Student : Person
+    public class Student : Person
     {
         private int classNumber;
 
