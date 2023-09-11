@@ -8,6 +8,7 @@ namespace Defining_Class
         private DateTime date;
         private string dialledPhoneNumber;
         private int callDuration;
+        private decimal callPrice;
 
         public DateTime Date
         {
@@ -44,10 +45,16 @@ namespace Defining_Class
             }
         }
 
-        public double CallDuration
+        public int CallDuration
         {
             get { return callDuration; }
-            private set { }
+            set { this.callDuration = value;  }
+        }
+
+        public decimal CallPrice
+        {
+            get { return callPrice; }
+            set { this.callPrice = value; }
         }
 
         public Call(string phoneNumber)
@@ -55,19 +62,6 @@ namespace Defining_Class
             this.Date = DateTime.Now;
             this.DialledPhoneNumber = phoneNumber;
             this.callDuration = 0;
-        }
-
-        public void StartCall()
-        {
-            Console.WriteLine($"Calling {DialledPhoneNumber}...");
-            Thread.Sleep( 10000 );
-        }
-
-        public void EndCall()
-        {
-            DateTime endTime = DateTime.Now;
-            CallDuration = (int)(endTime - Date).Seconds;
-            Console.WriteLine($"Call ended after {CallDuration} seconds.");
         }
     }
 }

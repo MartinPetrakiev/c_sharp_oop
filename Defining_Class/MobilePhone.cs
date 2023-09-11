@@ -22,7 +22,7 @@ namespace Defining_Class
         private decimal price;
         private Battery phoneBattery;
         private Display phoneDisplay;
-        private List<Call> CallHistory;
+        private List<Call> CallHistory = new List<Call>();
         public static MobilePhone IPhone4S = new MobilePhone("Apple", "iPhone 4S", (decimal)399.99, new Battery("XYZ789", BatteryType.LiIon, 48, 8), new Display(3.5, 16000000));
 
         public string Model 
@@ -74,6 +74,60 @@ namespace Defining_Class
             this.Price = price;
             this.PhoneBattery = battery;
             this.PhoneDisplay = display;
+        }
+
+        public void AddCall(Call currentCall)
+        {
+            this.CallHistory.Add(currentCall);
+        }
+
+        public void RemoveCall(Call currentCall) 
+        {
+            this.CallHistory.Remove(currentCall);
+        }
+
+        public void ViewCallHistory()
+        {
+            foreach (Call call in this.CallHistory)
+            {
+                Console.WriteLine(
+                    $"Dialled phone number: {call.DialledPhoneNumber}\n" +
+                    $"Date: {call.Date}\n" +
+                    $"Call duration: {call.CallDuration / 60} min and {call.CallDuration % 60} sec\n" +
+                    $"Call price: ${call.CallPrice:F2}\n"
+                    );
+                Console.WriteLine(new string('-', 50));
+            }
+        }
+
+        public void ClearCallHistory()
+        {
+            this.CallHistory.Clear();
+        }
+
+        public void StartCall(Call currentCall)
+        {
+            Console.WriteLine($"Calling {currentCall.DialledPhoneNumber}...");
+            Thread.Sleep(1000);
+        }
+
+        public void EndCall(Call currentCall)
+        {
+            DateTime endTime = DateTime.Now;
+            currentCall.CallDuration = (int)(endTime - currentCall.Date).Seconds;
+            currentCall.CallPrice = Decimal.Divide(currentCall.CallDuration, 60) * (decimal)0.37;
+            Console.WriteLine($"Call ended after {currentCall.CallDuration} seconds.");
+            this.AddCall(currentCall);
+        }
+
+        public void PhoneBill()
+        {
+            decimal totalPrice = 0;
+            foreach (Call call in this.CallHistory)
+            {
+                totalPrice += call.CallPrice;
+            }
+            Console.WriteLine($"Phone bill: ${totalPrice:F2}");
         }
 
         public void PhoneBasicSpec()

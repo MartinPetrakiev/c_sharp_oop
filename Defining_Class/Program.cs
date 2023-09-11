@@ -41,9 +41,32 @@ namespace Defining_Class
 
             Console.WriteLine(MobilePhone.IPhone4S);
 
-            var call = new Call("+35988787878");
-            call.StartCall();
-            call.EndCall();
+            var firstCall = new Call("+35988787878");
+            var secondCall = new Call("+35922887878");
+            var galaxyPhone = mobilePhonesArray[0];
+
+            galaxyPhone.StartCall(firstCall);
+            galaxyPhone.EndCall(firstCall);
+
+            galaxyPhone.StartCall(secondCall);
+            galaxyPhone.EndCall(secondCall);
+
+            Console.WriteLine(new string('-', 50));
+
+            //Call history
+            galaxyPhone.ViewCallHistory();
+
+            //Phone bill
+            galaxyPhone.PhoneBill();
+
+            galaxyPhone.ClearCallHistory();
+
+            Console.WriteLine(new string('-', 50));
+
+            //Phone bill after "paying/clearing history"
+            galaxyPhone.PhoneBill();
+
+            Console.ReadKey();
         }
     }
 }
