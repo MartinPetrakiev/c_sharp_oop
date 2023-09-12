@@ -2,7 +2,7 @@
 {
     public class Dog : Animal, ISound
     {
-        public Dog(string name, string sex, int age) :base(name, sex, age)
+        public Dog(string name, string sex, uint age) :base(name, sex, age)
         {
         }
 

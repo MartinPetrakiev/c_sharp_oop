@@ -6,6 +6,18 @@ namespace Animal_hierarchy
 {
     class Program
     {
+        public static List<AnimalAverageAge> GetAverageAges(Animal[] animals)
+        {
+            return animals.GroupBy(a => a.GetType().Name)
+                            .Select(group =>
+                            {
+                                string animalType = group.Key;
+                                double averageAge = group.Average(a => a.Age);
+                                return new AnimalAverageAge(animalType, averageAge);
+                            })
+                            .ToList();
+        }
+
         public static void Main(string[] args)
         {
             Animal[] animals = new Animal[]
@@ -17,16 +29,11 @@ namespace Animal_hierarchy
                 new Tomcat("Tom", 5)
             };
 
-            var averageAges = animals.GroupBy(a => a.GetType().Name)
-                                        .Select(group => new
-                                        {
-                                            AnimalType = group.Key,
-                                            AverageAge = group.Average(a => a.Age)
-                                        });
+            var averageAges = GetAverageAges(animals);
 
             foreach (var avgAge in averageAges)
             {
-                Console.WriteLine($"{avgAge.AnimalType}: Average Age = {avgAge.AverageAge}");
+                Console.WriteLine($"{avgAge.AnimalType} - Average Age: {avgAge.AverageAge}");
             }
 
             Dog[] dogs = new Dog[]
@@ -41,6 +48,8 @@ namespace Animal_hierarchy
                 Console.WriteLine($"{dog.Name} says: ");
                 dog.MakeSound();
             }
+
+            Console.ReadLine();
         }
     }
 }

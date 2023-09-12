@@ -7,11 +7,11 @@
 
     public class Animal
     {
-        public int Age { get; set; }
+        public uint Age { get; set; }
         public string Name { get; set; }
         public string Sex { get; set; }
 
-        public Animal(string name, string sex, int age)
+        public Animal(string name, string sex, uint age)
         {
             this.Name = name;
             this.Sex = sex;

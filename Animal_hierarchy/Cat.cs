@@ -2,7 +2,7 @@
 {
     public class Cat : Animal, ISound
     {
-        public Cat (string name, string sex, int age) : base(name, sex, age) { }
+        public Cat (string name, string sex, uint age) : base(name, sex, age) { }
 
         public void MakeSound()
         {

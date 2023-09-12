@@ -2,7 +2,7 @@
 {
     public class Tomcat : Cat
     {
-        public Tomcat(string name, int age) : base("Male", name, age) 
+        public Tomcat(string name, uint age) : base("Male", name, age) 
         { 
         }
     }

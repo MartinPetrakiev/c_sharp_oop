@@ -2,7 +2,7 @@
 {
     public class Frog : Animal, ISound
     {
-        public Frog(string name, string sex, int age) : base(name, sex, age)
+        public Frog(string name, string sex, uint age) : base(name, sex, age)
         {
         }
 
