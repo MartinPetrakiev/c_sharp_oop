@@ -93,7 +93,12 @@
 
         public static bool operator true(Matrix<T> matrix)
         {
-            return matrix.Cast<T>().Any(element => !element.Equals(default(T)));
+            return matrix.elements.Cast<T>().Any(element => !element.Equals(default(T)));
+        }
+
+        public static bool operator false(Matrix<T> matrix)
+        {
+            return matrix.elements.Cast<T>().All(element => element.Equals(default(T)));
         }
     }
 }

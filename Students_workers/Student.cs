@@ -6,7 +6,7 @@
         {
         }
 
-        public int Grade
+        public uint Grade
         {
             get; set;
         }

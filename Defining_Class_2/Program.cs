@@ -102,6 +102,7 @@
                 Console.WriteLine("Version attribute not found for Matrix<int>.");
             }
 
+            Console.WriteLine(matrix ? "Matrix is fine." : "Not ok!");
         }
     }
 }
