@@ -21,19 +21,19 @@ namespace Bank_accounts
                 case CustommerType.Individual:
                     if (periodOfTime > 6)
                     {
-                        interestAmount = this.Balance * (decimal)(Math.Pow(1 + this.InterestRate, periodOfTime - 6) - 1); ;
+                        interestAmount = this.Balance * (decimal)(this.InterestRate / 100) * (periodOfTime - 6);
                     }
                     break;
 
                 case CustommerType.Company:
                     if (periodOfTime <= 12)
                     {
-                        interestAmount = this.Balance * (decimal)(Math.Pow(1 + this.InterestRate / 2, periodOfTime) - 1);
+                        interestAmount = this.Balance * (decimal)(this.InterestRate / 100) * periodOfTime;
                     }
                     else
                     {
-                        decimal firstTwelveMonths = this.Balance * (decimal)(Math.Pow(1 + this.InterestRate / 2, 12) - 1);
-                        interestAmount = firstTwelveMonths + this.Balance * (decimal)(Math.Pow(1 + this.InterestRate, periodOfTime - 12) - 1);
+                        decimal firstTwelveMonths = this.Balance * (decimal)(this.InterestRate / 100) / 2 * 12;
+                        interestAmount = firstTwelveMonths + this.Balance * (decimal)(this.InterestRate / 100) * (periodOfTime - 12);
                     }
                     break;
             }

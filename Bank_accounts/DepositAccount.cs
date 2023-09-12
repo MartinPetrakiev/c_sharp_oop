@@ -34,7 +34,8 @@ namespace Bank_accounts
             decimal interestAmount = 0;
             if (this.Balance >= 1000) 
             {
-                interestAmount = this.Balance * (decimal)(Math.Pow(1 + this.InterestRate, periodOfTime) - 1);
+                Console.WriteLine(this.Balance);
+                interestAmount = this.Balance * (decimal)(this.InterestRate / 100) * periodOfTime;
             }
 
             return interestAmount;
