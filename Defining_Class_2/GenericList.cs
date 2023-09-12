@@ -73,14 +73,16 @@ namespace Defining_Class_2
 
         public int FindIndex(T element)
         {
+            int index = -1;
             for (int i = 0; i < count; i++)
             {
                 if (object.Equals(this.elements[i], element))
                 {
-                    return i;
+                    index = i; 
+                    break;
                 }
             }
-            return -1;
+            return index;
         }
 
         public T Min()
