@@ -93,22 +93,7 @@
 
         public static bool operator true(Matrix<T> matrix)
         {
-            for (int i = 0; i < matrix.Rows; i++)
-            {
-                for (int j = 0; j < matrix.Columns; j++)
-                {
-                    if ((dynamic)matrix[i, j] != 0)
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-
-        public static bool operator false(Matrix<T> matrix)
-        {
-            return matrix == null;
+            return matrix.Cast<T>().Any(element => !element.Equals(default(T)));
         }
     }
 }
