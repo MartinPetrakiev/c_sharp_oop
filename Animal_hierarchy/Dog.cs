@@ -1,4 +1,6 @@
-﻿namespace Animal_hierarchy
+﻿using Animal_hierarchy.Interfaces;
+
+namespace Animal_hierarchy
 {
     public class Dog : Animal, ISound
     {

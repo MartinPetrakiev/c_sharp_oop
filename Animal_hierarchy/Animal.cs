@@ -1,10 +1,5 @@
 ﻿namespace Animal_hierarchy
 {
-    public interface ISound
-    {
-        void MakeSound();
-    }
-
     public class Animal
     {
         public uint Age { get; set; }

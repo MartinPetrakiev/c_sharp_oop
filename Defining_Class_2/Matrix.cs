@@ -1,7 +1,9 @@
-﻿namespace Defining_Class_2
+﻿using System.Globalization;
+
+namespace Defining_Class_2
 {
     [Version("1.0")]
-    public class Matrix<T>
+    public class Matrix<T> where T : struct
     {
         private T[,] elements;
         private int rows;
