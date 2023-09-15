@@ -1,30 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace School_classes
+﻿namespace School_classes
 {
-    public class Person
+    public class Person : IComment
     {
-        private string name;
+        public string name;
 
-        public Person()
-        {
-        }
-
-        public Person(string name) 
+        public Person(string name)
         {
             this.Name = name;
         }
 
-        public string Name 
-        { 
+        public string Name
+        {
             get { return name; }
-            set { name = value; } 
+            set { name = value; }
         }
 
-        public string Comment 
-        { 
-            get; set; 
-        }
+        public string Comment { get; set; }
     }
 }

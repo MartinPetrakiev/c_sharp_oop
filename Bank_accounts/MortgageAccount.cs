@@ -1,31 +1,25 @@
 ﻿using Bank_accounts.Enumerators;
+using Bank_accounts.Interfaces;
 
 namespace Bank_accounts
 {
     public class MortgageAccount : BankAccount
     {
-        public MortgageAccount(CustommerType custommerType, double interestRate) : base(custommerType, interestRate)
-        {
-        }
-
-        public void Deposit(decimal amount)
-        {
-            this.balance += amount;
-        }
+        public MortgageAccount(CustomerType custommerType, double interestRate) : base(custommerType, interestRate) {}
 
         public override decimal CalculateInterestAmount(int periodOfTime)
         {
             decimal interestAmount = 0;
-            switch (this.CustommerType)
+            switch (this.CustomerType)
             {
-                case CustommerType.Individual:
+                case CustomerType.Individual:
                     if (periodOfTime > 6)
                     {
                         interestAmount = this.Balance * (decimal)(this.InterestRate / 100) * (periodOfTime - 6);
                     }
                     break;
 
-                case CustommerType.Company:
+                case CustomerType.Company:
                     if (periodOfTime <= 12)
                     {
                         interestAmount = this.Balance * (decimal)(this.InterestRate / 100) * periodOfTime;

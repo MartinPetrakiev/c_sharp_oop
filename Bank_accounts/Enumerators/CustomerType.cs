@@ -1,6 +1,6 @@
 ﻿namespace Bank_accounts.Enumerators
 {
-    public enum CustommerType
+    public enum CustomerType
     {
         Individual,
         Company
