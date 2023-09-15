@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace School_classes
+﻿namespace School_classes
 {
     public class Program
     {
@@ -15,7 +12,7 @@ namespace School_classes
                 Comment = "Calculus"
             };
 
-            Discipline history = new Discipline()
+            IDiscipline history = new Discipline()
             {
                 Name = "History",
                 NumberOfLectures = 3,
@@ -23,16 +20,14 @@ namespace School_classes
                 Comment = "World history"
             };
 
-            Student student1 = new Student()
+            Student student1 = new Student("Katerina")
             {
-                Name = "Katerina",
                 ClassNumber = 10,
                 Comment = "Top student in class"
             };
 
-            Teacher teacher1 = new Teacher()
+            Teacher teacher1 = new Teacher("Mr. Ivanov")
             {
-                Name = "Mr. Ivanov",
                 Comment = "Experienced teacher"
             };
             teacher1.Disciplines.Add(math);

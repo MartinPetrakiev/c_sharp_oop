@@ -5,14 +5,11 @@ namespace School_classes
 {
     public class Teacher : Person
     {
-        public Teacher()
+        public Teacher(string name) : base(name)
         {
-            this.Disciplines = new List<Discipline>();
+            this.Disciplines = new List<IDiscipline>();
         }
 
-        public List<Discipline> Disciplines 
-        { 
-            get; set; 
-        }
+        public List<IDiscipline> Disciplines { get; set; }
     }
 }

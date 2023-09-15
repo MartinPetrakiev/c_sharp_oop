@@ -6,8 +6,8 @@ namespace Bank_accounts
     {
         public static void Main(string[] args)
         {
-            DepositAccount firstDepositAccount = new DepositAccount(CustommerType.Individual, 0.8);
-            DepositAccount secondDepositAccount = new DepositAccount(CustommerType.Individual, 0.8);
+            DepositAccount firstDepositAccount = new DepositAccount(CustomerType.Individual, 0.8);
+            DepositAccount secondDepositAccount = new DepositAccount(CustomerType.Individual, 0.8);
 
             firstDepositAccount.Deposit((decimal)1000.24);
             secondDepositAccount.Deposit((decimal)846.434);

@@ -1,28 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace School_classes
+﻿namespace School_classes
 {
-    public class Discipline
+    public class Discipline : IDiscipline
     {
-        public string Name 
-        { 
-            get; set; 
-        }
+        public string Name { get; set; }
 
-        public int NumberOfLectures 
-        { 
-            get; set;
-        }
+        public uint NumberOfLectures { get; set; }
 
-        public int NumberOfExercises 
-        { 
-            get; set; 
-        }
+        public uint NumberOfExercises { get; set; }
 
-        public string Comment 
-        { 
-            get; set; 
-        }
+        public string Comment { get; set; }
     }
 }

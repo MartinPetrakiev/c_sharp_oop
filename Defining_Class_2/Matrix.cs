@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 
 namespace Defining_Class_2
 {
@@ -61,7 +62,7 @@ namespace Defining_Class_2
             }
         }
 
-        private static Matrix<T> PerformOperation(Matrix<T> a, Matrix<T> b, Func<T, T, T> operation)
+        private static Matrix<T> PerformOperation(Matrix<T> a, Matrix<T> b, Func<decimal, decimal, decimal> operation)
         {
             CheckDimensions(a, b);
 
@@ -71,26 +72,31 @@ namespace Defining_Class_2
             {
                 for (int j = 0; j < a.Columns; j++)
                 {
-                    result[i, j] = operation(a[i, j], b[i, j]);
+                    decimal aValue = Convert.ToDecimal(a[i, j]);
+                    decimal bValue = Convert.ToDecimal(b[i, j]);
+
+                    decimal resultValue = operation(aValue, bValue);
+
+                    result[i, j] = (T)Convert.ChangeType(resultValue, typeof(T));
                 }
             }
 
             return result;
         }
 
-        public static Matrix<T> operator +(Matrix<T> a, Matrix<T> b)
+        public static Matrix<T> operator +(Matrix<T> a, Matrix<T> b) 
         {
-            return PerformOperation(a, b, (x, y) => (dynamic)x + y);
+            return PerformOperation(a, b, (x, y) => x + y);
         }
 
         public static Matrix<T> operator -(Matrix<T> a, Matrix<T> b)
         {
-            return PerformOperation(a, b, (x, y) => (dynamic)x - y);
+            return PerformOperation(a, b, (x, y) => x - y);
         }
 
         public static Matrix<T> operator *(Matrix<T> a, Matrix<T> b)
         {
-            return PerformOperation(a, b, (x, y) => (dynamic)x * y);
+            return PerformOperation(a, b, (x, y) => x * y);
         }
 
         public static bool operator true(Matrix<T> matrix)

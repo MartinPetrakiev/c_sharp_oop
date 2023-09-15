@@ -2,9 +2,11 @@
 {
     public class Student : Person
     {
-        private int classNumber;
+        public uint classNumber;
 
-        public int ClassNumber
+        public Student(string name) : base(name) {}
+
+        public uint ClassNumber
         {
             get { return classNumber; }
             set { classNumber = value; }
