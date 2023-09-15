@@ -9,7 +9,7 @@
                 Name = "Mathematics",
                 NumberOfLectures = 4,
                 NumberOfExercises = 3,
-                Comment = "Calculus"
+                Comments = "Calculus"
             };
 
             Discipline history = new Discipline()
@@ -17,18 +17,20 @@
                 Name = "History",
                 NumberOfLectures = 3,
                 NumberOfExercises = 2,
-                Comment = "World history"
+                Comments = "World history"
             };
 
-            Student student1 = new Student("Katerina")
+            Student student1 = new Student()
             {
+                Name = "Katerina",
                 ClassNumber = 10,
-                Comment = "Top student in class"
+                Comments = "Top student in class"
             };
 
-            Teacher teacher1 = new Teacher("Mr. Ivanov")
+            Teacher teacher1 = new Teacher()
             {
-                Comment = "Experienced teacher"
+                Name = "Mr. Ivanov",
+                Comments = "Experienced teacher"
             };
             teacher1.Disciplines.Add(math);
             teacher1.Disciplines.Add(history);
@@ -36,10 +38,10 @@
             SchoolClass classA = new SchoolClass
             {
                 classId = "Class A",
-                Comment = "Grade 10"
+                Comments = "Grade 10"
             };
-            classA.Students.Add(student1);
-            classA.Teachers.Add(teacher1);
+            classA.AddStudent(student1);
+            classA.AddTeacher(teacher1);
 
             // Print
             Console.WriteLine($"Student: {student1.Name}, Class Number: {student1.ClassNumber}");
@@ -49,7 +51,7 @@
             Console.WriteLine("Taught Disciplines by Teacher:");
             foreach (var discipline in teacher1.Disciplines)
             {
-                Console.WriteLine($"- {discipline.Name} ({discipline.Comment}) -- Lectures: {discipline.NumberOfLectures}, Excercises: {discipline.NumberOfExercises}");
+                Console.WriteLine($"- {discipline.Name} ({discipline.Comments}) -- Lectures: {discipline.NumberOfLectures}, Excercises: {discipline.NumberOfExercises}");
             }
 
             Console.ReadLine();

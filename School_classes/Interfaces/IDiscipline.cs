@@ -1,9 +1,11 @@
-﻿public interface IDiscipline
+﻿namespace School_classes.Interfaces
 {
-    string Name { get; set; }
+    public interface IDiscipline
+    {
+        string Name { get; set; }
 
-    uint NumberOfLectures { get; set; }
+        uint NumberOfLectures { get; set; }
 
-    uint NumberOfExercises { get; set; }
+        uint NumberOfExercises { get; set; }
+    }
 }
-

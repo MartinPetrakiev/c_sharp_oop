@@ -1,15 +1,13 @@
-﻿namespace School_classes
+﻿using School_classes.Interfaces;
+
+namespace School_classes
 {
-    public class Student : Person
+    public class Student : IPerson, IComments
     {
-        public uint classNumber;
+        public string Name { get; set; }
 
-        public Student(string name) : base(name) {}
+        public uint ClassNumber { get; set; }
 
-        public uint ClassNumber
-        {
-            get { return classNumber; }
-            set { classNumber = value; }
-        }
+        public string Comments { get; set; }
     }
 }

@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using School_classes.Interfaces;
 
 namespace School_classes
 {
-    public class SchoolClass : IComment
+    public class SchoolClass : IComments
     {
         public SchoolClass()
         {
@@ -13,10 +12,20 @@ namespace School_classes
 
         public string classId { get; set; }
 
-        public List<Student> Students { get; set; }
+        public List<Student> Students { get; }
 
-        public List<Teacher> Teachers { get; set; }
+        public List<Teacher> Teachers { get; }
 
-        public string Comment { get; set; }
+        public string Comments { get; set; }
+
+        public void AddStudent(Student student)
+        {
+            Students.Add(student);
+        }
+
+        public void AddTeacher(Teacher teacher)
+        {
+            Teachers.Add(teacher);
+        }
     }
 }
