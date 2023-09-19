@@ -5,7 +5,7 @@ namespace Lambda_Core.Interfaces
     public interface ICore
     {
         char CoreID { get; set; }
-        CoreType CoreType { get; set; }
+        CoreType CoreType { get; }
         uint Durability { get; set; }
     }
 }

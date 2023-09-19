@@ -1,6 +1,5 @@
 ﻿using Lambda_Core.Enumerators;
 using Lambda_Core.Exceptions;
-using System.Xml.Linq;
 
 namespace Lambda_Core
 {
@@ -13,20 +12,23 @@ namespace Lambda_Core
             get { return cores; }
         }
 
-        public void CreateCore(char id, string type, int durability)
+        public void CreateCore( string type, uint durability)
         {
-            bool IdExists = this.Cores.Select(eachCore => eachCore.CoreID).Contains(id);
-            char coreID = id;
+            char lastCoreID = this.Cores.Count > 0 ? this.Cores.Last().CoreID : ' ';
+            char newCoreID;
             
-            if (IdExists && coreID == 'Z') 
+            if (lastCoreID == 'Z') 
             {
                 throw new LimitExceededException("Failed to create Core!");
             }
 
-            while (IdExists)
+            if (lastCoreID != ' ')
             {
-                coreID = (char)(((int)coreID) + 1);
-                IdExists = this.Cores.Select(eachCore => eachCore.CoreID).Contains(coreID);
+                newCoreID = (char)(((int)lastCoreID) + 1);
+            }
+            else
+            {
+                newCoreID = 'A';
             }
 
             if (durability < 0) 
@@ -38,10 +40,10 @@ namespace Lambda_Core
             switch (type) 
             {
                 case "System":
-                    core = new Core(coreID, CoreType.System, (uint)durability); 
+                    core = new Core(newCoreID, CoreType.System, durability); 
                     break;
                 case "Para":
-                    core = new Core(coreID, CoreType.Para, (uint)durability / 3);
+                    core = new Core(newCoreID, CoreType.Para, durability / 3);
                     break;
                 default:
                     throw new Exception("Failed to create Core!");
@@ -49,7 +51,7 @@ namespace Lambda_Core
             }
 
             this.Cores.Add(core);
-            Console.WriteLine($"Successfully created Core {coreID}!");
+            Console.WriteLine($"Successfully created Core {newCoreID}!");
         }
 
         public Core SelectCore(char id)
@@ -79,6 +81,24 @@ namespace Lambda_Core
             {
                 throw new Exception($"Failed to remove Core {id}!");
             }
+        }
+
+        public override string ToString()
+        {
+            uint totalDurability = (uint)this.Cores.Sum(core => core.Durability);
+            uint countOfAllFragments = (uint)this.Cores.Sum(core => core.Fragments.Count);
+
+            string resultString = $"Lambda Core Power Plant Status:\n" +
+                                  $"Total Durability: {totalDurability}\n" +
+                                  $"Total Cores: {this.Cores.Count}\n" +
+                                  $"Total Fragments: {countOfAllFragments}";
+
+            foreach (Core core in this.Cores)
+            {
+                resultString += "\n" + core.ToString();
+            }
+
+            return resultString;
         }
     }
 }
