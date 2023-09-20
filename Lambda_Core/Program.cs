@@ -24,13 +24,12 @@ namespace Lambda_Core
             string input = Console.ReadLine();
             PowerPlant LambdaCoreSystem = new PowerPlant();
             Core currentSelectedCore = new Core();
-            char coreName = ' ';
 
             while (input != "System Shutdown!")
             {
                 string[] rowSplit = input.Split(':');
                 string command = rowSplit[0];
-                string arguments = input.Length > 1 ? rowSplit[1] : null;
+                string arguments = input.Length > 1 ? rowSplit[1] : "";
 
                 switch (command)
                 {
@@ -44,60 +43,65 @@ namespace Lambda_Core
                         }
                         catch
                         {
-                            throw new Exception($"Failed to create Core!");
+                            throw new InvalidCastException($"Failed to create Core!");
                         }
                         LambdaCoreSystem.CreateCore(coreType, durability);
                         break;
                     case "RemoveCore":
+                        char idToBeRemoved;
                         try
                         {
-                            coreName = Convert.ToChar(arguments.Substring(1));
+                            idToBeRemoved = Convert.ToChar(arguments.Substring(1));
                         }
                         catch
                         {
-                            throw new Exception($"Failed to remove Core {arguments.Substring(1)}!");
+                            throw new InvalidCastException($"Failed to remove Core {arguments.Substring(1)}!");
                         }
-                        LambdaCoreSystem.RemoveCore(coreName);
+                        LambdaCoreSystem.RemoveCore(idToBeRemoved);
                         break;
                     case "SelectCore":
                         try
                         {
-                            coreName = Convert.ToChar(arguments.Substring(1));
+                            currentSelectedCore.CoreID = Convert.ToChar(arguments.Substring(1));
                         }
                         catch
                         {
-                            throw new Exception($"Failed to select Core {arguments.Substring(1)}!");
+                            throw new InvalidCastException($"Failed to select Core {arguments.Substring(1)}!");
                         }
-                        LambdaCoreSystem.SelectCore(coreName);
+                        LambdaCoreSystem.SelectCore(currentSelectedCore.CoreID);
                         break;
                     case "AttachFragment":
                         argumentsSplit = arguments.Split('@');
                         string fragmentType = argumentsSplit[1];
                         string fragmentName = argumentsSplit[2];
                         int fragmentPressureAffection = Convert.ToInt32(argumentsSplit[3]);
-                        
-                        if (currentSelectedCore.Fragments.Count >= 0)
-                        {
-                            currentSelectedCore.AttachFragment(fragmentType, fragmentName, fragmentPressureAffection);
-                        }
-                        else
-                        {
-                            throw new Exception($"Failed to attach Fragment {fragmentName}!");
-                        }
+
+                        currentSelectedCore.AttachFragment(fragmentType, fragmentName, fragmentPressureAffection);
+
+                        LambdaCoreSystem.UpdateCoresListWith(currentSelectedCore);
+
                         break;
                     case "DetachFragment":
-                        if (!object.Equals(currentSelectedCore, null))
+                        if (currentSelectedCore.CoreID == '\0' || currentSelectedCore.CoreID == ' ')
                         {
                             currentSelectedCore.DetachFragment();
+
+                            LambdaCoreSystem.UpdateCoresListWith(currentSelectedCore);
                         }
                         else
                         {
-                            throw new Exception($"Failed to attach Fragment!");
+                            throw new InvalidOperationException($"Failed to attach Fragment!");
                         }
+
                         break;
                     case "Status":
                         Console.WriteLine(LambdaCoreSystem.ToString());
                         break;
+                    default:
+                        Console.WriteLine("Invalid command!");
+                        throw new InvalidOperationException("Invalid command line provided!");
+                        break;
+
                 }
 
                 input = Console.ReadLine();

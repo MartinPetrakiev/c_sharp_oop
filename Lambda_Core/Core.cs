@@ -27,6 +27,12 @@ namespace Lambda_Core
 
         public void AttachFragment(string fragmentType, string name, int pressureAffection)
         {
+            if (this.CoreID == '\0' || this.CoreID == ' ')
+            {
+                Console.WriteLine($"Failed to attach Fragment {name}!");
+                throw new InvalidOperationException($"Failed to attach Fragment {name}!");
+            }
+
             Fragment newFragment = new Fragment() { Name = name };
             switch (fragmentType)
             {
@@ -37,12 +43,14 @@ namespace Lambda_Core
                     newFragment.FragmentType = FragmentType.Cooling;
                     break;
                 default:
-                    throw new Exception($"Failed to attach Fragment {name}!");
+                    Console.WriteLine($"Failed to attach Fragment {name}!");
+                    throw new InvalidOperationException($"Failed to attach Fragment {name}!");
                     break;
             }
 
             if (pressureAffection < 0)
             {
+                Console.WriteLine($"Failed to attach Fragment {name}!");
                 throw new NegativeNumberException($"Failed to attach Fragment {name}!");
             }
             else
@@ -61,7 +69,8 @@ namespace Lambda_Core
                     }
                     catch
                     {
-                        throw new Exception($"Failed to attach Fragment {name}!");
+                        Console.WriteLine($"Failed to attach Fragment {name}!");
+                        throw new InvalidOperationException($"Failed to attach Fragment {name}!");
                     }
                 }
             }
@@ -72,8 +81,7 @@ namespace Lambda_Core
             }
 
             this.Fragments.Add(newFragment);
-
-            Console.WriteLine($"Successfully attached Fragment {newFragment.Name} from Core {this.CoreID}!");
+            Console.WriteLine($"Successfully attached Fragment {newFragment.Name} to Core {this.CoreID}!");
         }
 
         public void DetachFragment()
@@ -102,7 +110,8 @@ namespace Lambda_Core
                     }
                     catch
                     {
-                        throw new Exception("Failed to detach Fragment!");
+                        Console.WriteLine("Failed to detach Fragment!");
+                        throw new InvalidOperationException("Failed to detach Fragment!");
                     }
                 }
 

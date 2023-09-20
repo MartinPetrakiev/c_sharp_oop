@@ -14,15 +14,16 @@ namespace Lambda_Core
 
         public void CreateCore( string type, uint durability)
         {
-            char lastCoreID = this.Cores.Count > 0 ? this.Cores.Last().CoreID : ' ';
+            char lastCoreID = this.Cores.Count > 0 ? this.Cores.Last().CoreID : '\0';
             char newCoreID;
             
             if (lastCoreID == 'Z') 
             {
+                Console.WriteLine("Failed to create Core!");
                 throw new LimitExceededException("Failed to create Core!");
             }
 
-            if (lastCoreID != ' ')
+            if (lastCoreID != '\0' && lastCoreID != ' ')
             {
                 newCoreID = (char)(((int)lastCoreID) + 1);
             }
@@ -33,6 +34,7 @@ namespace Lambda_Core
 
             if (durability < 0) 
             {
+                Console.WriteLine("Failed to create Core!");
                 throw new NegativeNumberException("Failed to create Core!");
             }
 
@@ -46,7 +48,8 @@ namespace Lambda_Core
                     core = new Core(newCoreID, CoreType.Para, durability / 3);
                     break;
                 default:
-                    throw new Exception("Failed to create Core!");
+                    Console.WriteLine("Failed to create Core!");
+                    throw new InvalidOperationException("Failed to create Core!");
                     break;
             }
 
@@ -63,7 +66,8 @@ namespace Lambda_Core
             }
             else
             {
-                throw new Exception($"Failed to select Core {id}!");
+                Console.WriteLine($"Failed to select Core {id}!");
+                throw new InvalidOperationException($"Failed to select Core {id}!");
             }
 
             return selectedCore;
@@ -71,15 +75,26 @@ namespace Lambda_Core
 
         public void RemoveCore(char id)
         {
-            bool IdExists = this.Cores.Select(eachCore => eachCore.CoreID).Contains(id);
-            if (IdExists) 
+            int indexOfCore = this.Cores.FindIndex(eachCore => eachCore.CoreID == id);
+            if (indexOfCore != -1) 
             {
-                this.Cores.Remove(new Core() { CoreID = id });
+                this.Cores.RemoveAt(indexOfCore);
                 Console.WriteLine($"Successfully removed Core {id}!");
             }
             else
             {
-                throw new Exception($"Failed to remove Core {id}!");
+                Console.WriteLine($"Failed to remove Core {id}!");
+                throw new InvalidOperationException($"Failed to remove Core {id}!");
+            }
+        }
+
+        public void UpdateCoresListWith(Core currentSelectedCore)
+        {
+            int idnexCoreInPowerPlant = this.Cores.FindIndex(core => core.CoreID == currentSelectedCore.CoreID);
+
+            if (idnexCoreInPowerPlant != -1)
+            {
+                this.Cores[idnexCoreInPowerPlant] = currentSelectedCore;
             }
         }
 
