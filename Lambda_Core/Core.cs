@@ -1,132 +1,58 @@
 ﻿using Lambda_Core.Enumerators;
-using Lambda_Core.Exceptions;
-using Lambda_Core.Interfaces;
 
 namespace Lambda_Core
 {
-    public class Core : ICore
+    public abstract class Core
     {
-        public char CoreID { get; set; }
-        public CoreType CoreType { get; }
-        public uint Durability { get; set; }
+        public char Name { get; protected set; }
+        public uint Durability { get; protected set; }
         public int Pressure { get; protected set; }
-        public List<Fragment> Fragments { get; }
+        public List<Fragment> Fragments { get; protected set; }
 
-        public Core() 
+        protected Core(char name, uint durability)
         {
-            this.Fragments = new List<Fragment>();
-        }
-
-        public Core(char coreID, CoreType coreType, uint durability) 
-        {
-            this.CoreID = coreID;
-            this.CoreType = coreType;
+            this.Name = name;
             this.Durability = durability;
+            this.Pressure = 0;
             this.Fragments = new List<Fragment>();
         }
 
-        public void AttachFragment(string fragmentType, string name, int pressureAffection)
+        public bool AddFragment(Fragment fragment)
         {
-            if (this.CoreID == '\0' || this.CoreID == ' ')
-            {
-                Console.WriteLine($"Failed to attach Fragment {name}!");
-                throw new InvalidOperationException($"Failed to attach Fragment {name}!");
-            }
+            bool success = true;
+            this.Fragments.Add(fragment);
 
-            Fragment newFragment = new Fragment() { Name = name };
-            switch (fragmentType)
+            if (fragment.FragmentType == FragmentType.Cooling)
             {
-                case "Nuclear":
-                    newFragment.FragmentType = FragmentType.Nuclear;
-                    break;
-                case "Cooling":
-                    newFragment.FragmentType = FragmentType.Cooling;
-                    break;
-                default:
-                    Console.WriteLine($"Failed to attach Fragment {name}!");
-                    throw new InvalidOperationException($"Failed to attach Fragment {name}!");
-                    break;
-            }
-
-            if (pressureAffection < 0)
-            {
-                Console.WriteLine($"Failed to attach Fragment {name}!");
-                throw new NegativeNumberException($"Failed to attach Fragment {name}!");
+                this.Pressure -= (int)fragment.PressureAffection;
             }
             else
             {
-                newFragment.PressureAffection = newFragment.FragmentType == FragmentType.Nuclear ? (uint)pressureAffection * 2 : (uint)pressureAffection * 3;
-            }
-
-            if (newFragment.FragmentType == FragmentType.Nuclear)
-            {
-                this.Pressure += (int)newFragment.PressureAffection;
-                if (this.Pressure > 0)
+                this.Pressure += (int)fragment.PressureAffection;
+                try
                 {
-                    try
-                    {
-                        this.Durability -= newFragment.PressureAffection;
-                    }
-                    catch
-                    {
-                        Console.WriteLine($"Failed to attach Fragment {name}!");
-                        throw new InvalidOperationException($"Failed to attach Fragment {name}!");
-                    }
+                    this.Durability -= fragment.PressureAffection;
+                }
+                catch
+                {
+                    success = false;
                 }
             }
-            else
-            {
-                this.Pressure -= (int)newFragment.PressureAffection;
-                this.Durability += newFragment.PressureAffection;
-            }
 
-            this.Fragments.Add(newFragment);
-            Console.WriteLine($"Successfully attached Fragment {newFragment.Name} to Core {this.CoreID}!");
+            return success;
         }
 
-        public void DetachFragment()
+        public string IsCritical()
         {
-            if (this.Fragments.Count == 0)
-            {
-                Console.WriteLine("Failed to detach Fragment!");
-            }
-            else
-            {
-                Fragment lastFragment = this.Fragments[this.Fragments.Count - 1];
-                this.Fragments.Remove(lastFragment);
-
-                if (lastFragment.FragmentType == FragmentType.Nuclear)
-                {
-                    this.Pressure -= (int)lastFragment.PressureAffection;
-                    this.Durability += lastFragment.PressureAffection;
-                }
-                else
-                {
-                    this.Pressure += (int)lastFragment.PressureAffection;
-
-                    try
-                    {
-                        this.Durability -= lastFragment.PressureAffection;
-                    }
-                    catch
-                    {
-                        Console.WriteLine("Failed to detach Fragment!");
-                        throw new InvalidOperationException("Failed to detach Fragment!");
-                    }
-                }
-
-                Console.WriteLine($"Successfully detached Fragment {lastFragment.Name} from Core {this.CoreID}!");
-            }
+            string status = this.Durability > 0 ? "CRITICAL" : "NORMAL";
+            return status;
         }
 
         public override string ToString()
         {
-            string status = this.Pressure > 0 ? "CRITICAL" : "NORMAL";
-
-            string resultString = $"Core {this.CoreID}:\n" +
+            string resultString = $"Core {this.Name}:\n" +
                                   $"####Durability: {this.Durability}\n" +
-                                  $"####Status: {status}";
-
+                                  $"####Status: {this.IsCritical()}";
             return resultString;
         }
     }

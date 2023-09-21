@@ -1,21 +1,18 @@
 ﻿using Lambda_Core.Enumerators;
-using Lambda_Core.Interfaces;
 
 namespace Lambda_Core
 {
-    public class Fragment : IFragment
+    public class Fragment
     {
         public string Name { get; set; }
-        public FragmentType FragmentType { get; set; }
-        public uint PressureAffection { get; set; }
+        public FragmentType FragmentType { get; protected set; }
+        public uint PressureAffection { get; protected set; }
 
-        public Fragment() { }
-
-        public Fragment(string name, FragmentType fragmentType, uint pressureAffection) 
-        { 
+        protected Fragment(string name, FragmentType type, uint pressureAffection)
+        {
             this.Name = name;
+            this.FragmentType = type;
             this.PressureAffection = pressureAffection;
-            this.FragmentType = fragmentType;
         }
     }
 }
