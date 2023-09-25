@@ -98,14 +98,17 @@ namespace Lambda_Core
         {
             Fragment newFragment = null;
 
-            switch (type) 
+            if (pressureAffection >= 0)
             {
-                case "Nuclear":
-                    newFragment = new NuclearFragment(name, FragmentType.Nuclear, (uint)pressureAffection);
-                    break;
-                case "Cooling":
-                    newFragment = new CoolingFragment(name, FragmentType.Cooling, (uint)pressureAffection);
-                    break;
+                switch (type)
+                {
+                    case "Nuclear":
+                        newFragment = new NuclearFragment(name, FragmentType.Nuclear, (uint)pressureAffection);
+                        break;
+                    case "Cooling":
+                        newFragment = new CoolingFragment(name, FragmentType.Cooling, (uint)pressureAffection);
+                        break;
+                }
             }
 
             return newFragment;
