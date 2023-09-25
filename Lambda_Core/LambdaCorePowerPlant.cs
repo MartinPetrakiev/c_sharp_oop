@@ -1,15 +1,18 @@
 ﻿using Lambda_Core.Enumerators;
 using Lambda_Core.Interfaces;
+using Lambda_Core.Dictionaries;
 
 namespace Lambda_Core
 {
     public class LambdaCorePowerPlant
     {
         public List<Core> Cores { get; protected set; }
+        private PowerPlantDictionaries PowerPlantDictionaries { get; set; }
 
         public LambdaCorePowerPlant() 
         { 
             this.Cores = new List<Core>();
+            this.PowerPlantDictionaries = new PowerPlantDictionaries();
         }
 
         public bool CreateCore(string type, int durability, ICoreService coreService, out Core currentCore)
@@ -31,18 +34,14 @@ namespace Lambda_Core
             return success;
         }
 
-        public Core HandleCoreCreation(char coreName, string type, int durability, ICoreService coreService) 
+        private Core HandleCoreCreation(char coreName, string type, int durability, ICoreService coreService) 
         {
             Core newCore = null;
 
-            switch (type)
+            if (this.PowerPlantDictionaries.coreTypeMap.ContainsKey(type))
             {
-                case "System":
-                    newCore = new SystemCore(coreName, (uint)durability, coreService);
-                    break;
-                case "Para":
-                    newCore = new ParaCore(coreName, (uint)durability, coreService);
-                    break;
+                Type coreType = this.PowerPlantDictionaries.coreTypeMap[type];
+                newCore = Activator.CreateInstance(coreType, coreName, (uint)durability, coreService) as Core;
             }
 
             return newCore;
@@ -94,21 +93,14 @@ namespace Lambda_Core
             return success;
         }
 
-        public Fragment CreateFragment(string type, string name, int pressureAffection)
+        private Fragment CreateFragment(string type, string name, int pressureAffection)
         {
             Fragment newFragment = null;
 
-            if (pressureAffection >= 0)
+            if (pressureAffection >= 0 && this.PowerPlantDictionaries.fragmentTypeMap.ContainsKey(type))
             {
-                switch (type)
-                {
-                    case "Nuclear":
-                        newFragment = new NuclearFragment(name, FragmentType.Nuclear, (uint)pressureAffection);
-                        break;
-                    case "Cooling":
-                        newFragment = new CoolingFragment(name, FragmentType.Cooling, (uint)pressureAffection);
-                        break;
-                }
+                Type fragmentType = this.PowerPlantDictionaries.fragmentTypeMap[type];
+                newFragment = Activator.CreateInstance(fragmentType, name, Enum.Parse<FragmentType>(type), (uint)pressureAffection) as Fragment;
             }
 
             return newFragment;
