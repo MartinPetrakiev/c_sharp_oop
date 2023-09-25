@@ -1,13 +1,16 @@
-﻿namespace Lambda_Core
+﻿using Lambda_Core.Interfaces;
+using Lambda_Core.Services;
+
+namespace Lambda_Core
 {
     class Program
     {
         public static void Main(string[] args) 
         {
-            LambdaCore lambdaCore = new LambdaCore();
+            LambdaCorePowerPlant lambdaCore = new LambdaCorePowerPlant();
 
-            List<Core> cores = new List<Core>();
             Core currentCore = null;
+            CoreService coreService = new CoreService();
 
             while (true)
             {
@@ -40,20 +43,20 @@
                             break;
                         }
 
-                        success = lambdaCore.CreateCore(lambdaCore.Cores, coreType, coreDurability, out newCore);
+                        success = lambdaCore.CreateCore(coreType, coreDurability, coreService, out newCore);
 
                         Console.WriteLine(success ? $"Successfully created Core {newCore.Name}!" : "Failed to create Core!");
                         break;
 
                     case "RemoveCore":
                         string coreNameToRemove = commandArguments[1].Substring(1);
-                        success = lambdaCore.RemoveCore(lambdaCore.Cores, coreNameToRemove);
+                        success = lambdaCore.RemoveCore(coreNameToRemove);
                         Console.WriteLine(success ? $"Successfully removed Core {coreNameToRemove}!" : $"Failed to remove Core {coreNameToRemove}!");
                         break;
 
                     case "SelectCore":
                         string coreNameToSelect = commandArguments[1].Substring(1);
-                        success = lambdaCore.SelectCore(lambdaCore.Cores, coreNameToSelect, out currentCore);
+                        success = lambdaCore.SelectCore(coreNameToSelect, out currentCore);
                         Console.WriteLine(success ? $"Currently selected Core {coreNameToSelect}!" : $"Failed to select Core {coreNameToSelect}!");
                         break;
 

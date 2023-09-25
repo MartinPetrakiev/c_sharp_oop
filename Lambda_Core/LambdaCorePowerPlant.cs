@@ -1,25 +1,27 @@
 ﻿using Lambda_Core.Enumerators;
+using Lambda_Core.Interfaces;
 
 namespace Lambda_Core
 {
-    public class LambdaCore
+    public class LambdaCorePowerPlant
     {
         public List<Core> Cores { get; protected set; }
 
-        public LambdaCore() 
+        public LambdaCorePowerPlant() 
         { 
             this.Cores = new List<Core>();
         }
 
-        public bool CreateCore(List<Core> cores, string type, int durability, out Core currentCore)
+        public bool CreateCore(string type, int durability, ICoreService coreService, out Core currentCore)
         {
             bool success = false;
             currentCore = null;
 
-            if ((type == "System" || type == "Para") && durability >= 0)
+            if (durability >= 0)
             {
-                char coreName = (char)(cores.Count + 'A');
-                Core newCore = (type == "System") ? new SystemCore(coreName, (uint)durability) : new ParaCore(coreName, (uint)durability);
+                char coreName = (char)(this.Cores.Count + 'A');
+                Core newCore = this.HandleCoreCreation(coreName, type, durability, coreService);
+                   
                 this.Cores.Add(newCore);
                 currentCore = newCore;
 
@@ -29,10 +31,27 @@ namespace Lambda_Core
             return success;
         }
 
-        public bool RemoveCore(List<Core> cores, string name)
+        public Core HandleCoreCreation(char coreName, string type, int durability, ICoreService coreService) 
+        {
+            Core newCore = null;
+
+            switch (type)
+            {
+                case "System":
+                    newCore = new SystemCore(coreName, (uint)durability, coreService);
+                    break;
+                case "Para":
+                    newCore = new ParaCore(coreName, (uint)durability, coreService);
+                    break;
+            }
+
+            return newCore;
+        }
+
+        public bool RemoveCore(string name)
         {
             bool success = false;
-            Core coreToRemove = cores.FirstOrDefault(core => core.Name.ToString() == name);
+            Core coreToRemove = this.Cores.FirstOrDefault(core => core.Name.ToString() == name);
 
             if (coreToRemove != null)
             {
@@ -43,10 +62,10 @@ namespace Lambda_Core
             return success;
         }
 
-        public bool SelectCore(List<Core> cores, string name, out Core currentCore)
+        public bool SelectCore(string name, out Core currentCore)
         {
             bool success = false;
-            currentCore = cores.FirstOrDefault(core => core.Name.ToString() == name);
+            currentCore = this.Cores.FirstOrDefault(core => core.Name.ToString() == name);
 
             if (currentCore != null)
             {
@@ -59,18 +78,37 @@ namespace Lambda_Core
         public bool AttachFragment(Core core, string type, string name, int pressureAffection)
         {
             bool success = false;
-            if ((type == "Nuclear" || type == "Cooling") && pressureAffection >= 0)
+            Fragment newFragment = null;
+
+            if (pressureAffection >= 0)
             {
-                Fragment newFragment = type == "Nuclear"
-                    ? new NuclearFragment(name, FragmentType.Nuclear, (uint)pressureAffection)
-                    : new CoolingFragment(name, FragmentType.Cooling, (uint)pressureAffection);
+                newFragment = CreateFragment(type, name, pressureAffection);
+            }
 
+            if (newFragment != null)
+            {
                 core.AddFragment(newFragment);
-
                 success = true;
             }
 
             return success;
+        }
+
+        public Fragment CreateFragment(string type, string name, int pressureAffection)
+        {
+            Fragment newFragment = null;
+
+            switch (type) 
+            {
+                case "Nuclear":
+                    newFragment = new NuclearFragment(name, FragmentType.Nuclear, (uint)pressureAffection);
+                    break;
+                case "Cooling":
+                    newFragment = new CoolingFragment(name, FragmentType.Cooling, (uint)pressureAffection);
+                    break;
+            }
+
+            return newFragment;
         }
 
         public bool DetachFragment(Core core)

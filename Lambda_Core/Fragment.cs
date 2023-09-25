@@ -2,7 +2,7 @@
 
 namespace Lambda_Core
 {
-    public class Fragment
+    public abstract class Fragment
     {
         public string Name { get; set; }
         public FragmentType FragmentType { get; protected set; }
