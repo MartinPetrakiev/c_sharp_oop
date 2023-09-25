@@ -8,7 +8,7 @@ namespace Lambda_Core.Services
         public bool AddFragment(Core core, Fragment fragment)
         {
             core.Fragments.Add(fragment);
-            return core.HandlePressureAndDurability(core, fragment);
+            return core.HandlePressureAndDurability(fragment);
         }
 
         public string IsCritical(Core core)
