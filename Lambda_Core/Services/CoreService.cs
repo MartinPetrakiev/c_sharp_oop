@@ -8,33 +8,7 @@ namespace Lambda_Core.Services
         public bool AddFragment(Core core, Fragment fragment)
         {
             core.Fragments.Add(fragment);
-            return this.HandlePressureAndDurability(core, fragment);
-        }
-
-        public bool HandlePressureAndDurability(Core core, Fragment fragment)
-        {
-            bool success = true;
-            if (fragment.FragmentType == FragmentType.Cooling)
-            {
-                core.Pressure -= (int)fragment.PressureAffection;
-            }
-            else
-            {
-                core.Pressure += (int)fragment.PressureAffection;
-                try
-                {
-                    checked
-                    {
-                        core.Durability -= fragment.PressureAffection;
-                    }
-                }
-                catch
-                {
-                    success = false;
-                }
-            }
-
-            return success;
+            return core.HandlePressureAndDurability(core, fragment);
         }
 
         public string IsCritical(Core core)
