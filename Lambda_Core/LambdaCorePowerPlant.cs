@@ -1,13 +1,14 @@
 ﻿using Lambda_Core.Enumerators;
-using Lambda_Core.Interfaces;
 using Lambda_Core.Dictionaries;
+using Lambda_Core.Interfaces;
 
 namespace Lambda_Core
 {
-    public class LambdaCorePowerPlant
+    public class LambdaCorePowerPlant : ICoreService, IFragmentService, IPowerPlantStatus
     {
         public List<Core> Cores { get; protected set; }
         private PowerPlantDictionaries PowerPlantDictionaries { get; set; }
+        public Core CurrentSelectedCore { get; set; }
 
         public LambdaCorePowerPlant() 
         { 
@@ -15,18 +16,17 @@ namespace Lambda_Core
             this.PowerPlantDictionaries = new PowerPlantDictionaries();
         }
 
-        public bool CreateCore(string type, int durability, ICoreService coreService, out Core currentCore)
+        public bool CreateCore(string type, int durability)
         {
             bool success = false;
-            currentCore = null;
 
             if (durability >= 0)
             {
                 char coreName = (char)(this.Cores.Count + 'A');
-                Core newCore = this.HandleCoreCreation(coreName, type, durability, coreService);
+                Core newCore = this.HandleCoreCreation(coreName, type, durability);
                    
                 this.Cores.Add(newCore);
-                currentCore = newCore;
+                this.CurrentSelectedCore = newCore;
 
                 success = true;
             }
@@ -34,14 +34,14 @@ namespace Lambda_Core
             return success;
         }
 
-        private Core HandleCoreCreation(char coreName, string type, int durability, ICoreService coreService) 
+        private Core HandleCoreCreation(char coreName, string type, int durability) 
         {
             Core newCore = null;
 
             if (this.PowerPlantDictionaries.coreTypeMap.ContainsKey(type))
             {
                 Type coreType = this.PowerPlantDictionaries.coreTypeMap[type];
-                newCore = Activator.CreateInstance(coreType, coreName, (uint)durability, coreService) as Core;
+                newCore = Activator.CreateInstance(coreType, coreName, (uint)durability) as Core;
             }
 
             return newCore;
@@ -61,12 +61,12 @@ namespace Lambda_Core
             return success;
         }
 
-        public bool SelectCore(string name, out Core currentCore)
+        public bool SelectCore(string name)
         {
             bool success = false;
-            currentCore = this.Cores.FirstOrDefault(core => core.Name.ToString() == name);
+            this.CurrentSelectedCore = this.Cores.FirstOrDefault(core => core.Name.ToString() == name);
 
-            if (currentCore != null)
+            if (this.CurrentSelectedCore != null)
             {
                 success = true;
             }
@@ -74,7 +74,7 @@ namespace Lambda_Core
             return success;
         }
 
-        public bool AttachFragment(Core core, string type, string name, int pressureAffection)
+        public bool AttachFragment(string type, string name, int pressureAffection)
         {
             bool success = false;
             Fragment newFragment = null;
@@ -86,7 +86,7 @@ namespace Lambda_Core
 
             if (newFragment != null)
             {
-                core.AddFragment(newFragment);
+                this.CurrentSelectedCore.AddFragment(newFragment);
                 success = true;
             }
 
@@ -118,7 +118,7 @@ namespace Lambda_Core
             return success;
         }
 
-        public override string ToString()
+        public string GetStatus()
         {
             uint totalDurability = (uint)this.Cores.Sum(core => core.Durability);
             uint countOfAllFragments = (uint)this.Cores.Sum(core => core.Fragments.Count);

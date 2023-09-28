@@ -1,6 +1,4 @@
 using Lambda_Core.Enumerators;
-using Lambda_Core.Interfaces;
-using Lambda_Core.Services;
 using Moq;
 using System.Reflection;
 
@@ -14,15 +12,13 @@ namespace Lambda_Core.Tests
         {
             // Arrange
             LambdaCorePowerPlant powerPlant = new LambdaCorePowerPlant();
-            ICoreService coreService = new CoreService();
-            Core currentCore;
 
             // Act
-            bool result = powerPlant.CreateCore("System", 100, coreService, out currentCore);
+            bool result = powerPlant.CreateCore("System", 100);
 
             // Assert
             Assert.IsTrue(result);
-            Assert.IsNotNull(currentCore);
+            Assert.IsNotNull(powerPlant.CurrentSelectedCore);
             Assert.AreEqual(1, powerPlant.Cores.Count);
         }
 
@@ -31,12 +27,10 @@ namespace Lambda_Core.Tests
         {
             // Arrange
             LambdaCorePowerPlant powerPlant = new LambdaCorePowerPlant();
-            ICoreService coreService = new CoreService();
-            Core currentCore;
-            powerPlant.CreateCore("System", 100, coreService, out currentCore);
+            powerPlant.CreateCore("System", 100);
 
             // Act
-            bool result = powerPlant.RemoveCore(currentCore.Name.ToString());
+            bool result = powerPlant.RemoveCore("A");
 
             // Assert
             Assert.IsTrue(result);
@@ -48,17 +42,14 @@ namespace Lambda_Core.Tests
         {
             // Arrange
             LambdaCorePowerPlant powerPlant = new LambdaCorePowerPlant();
-            ICoreService coreService = new CoreService();
-            Core currentCore;
-            powerPlant.CreateCore("System", 100, coreService, out currentCore);
+            powerPlant.CreateCore("System", 100);
 
             // Act
-            bool result = powerPlant.SelectCore(currentCore.Name.ToString(), out Core selectedCore);
+            bool result = powerPlant.SelectCore("A");
 
             // Assert
             Assert.IsTrue(result);
-            Assert.IsNotNull(selectedCore);
-            Assert.AreEqual(currentCore, selectedCore);
+            Assert.IsNotNull(powerPlant.CurrentSelectedCore);
         }
 
         [Test]
@@ -68,11 +59,11 @@ namespace Lambda_Core.Tests
             LambdaCorePowerPlant powerPlant = new LambdaCorePowerPlant();
 
             // Act
-            bool result = powerPlant.SelectCore("Non Existent Core", out Core selectedCore);
+            bool result = powerPlant.SelectCore("Non Existent Core");
 
             // Assert
             Assert.IsFalse(result);
-            Assert.IsNull(selectedCore);
+            Assert.IsNull(powerPlant.CurrentSelectedCore);
         }
 
         [Test]
@@ -132,63 +123,58 @@ namespace Lambda_Core.Tests
         public void AttachFragment_ValidInput_ReturnsTrueAndAttachesFragment()
         {
             // Arrange
-            CoreService coreService = new CoreService();
-            var coreMock = new Mock<SystemCore>('A', (uint)2000, coreService);
-            coreMock.Setup(c => c.AddFragment(It.IsAny<Fragment>()));
-
+            SystemCore core = new SystemCore('A',(uint)2000);
             LambdaCorePowerPlant powerPlant = new LambdaCorePowerPlant();
+            powerPlant.CurrentSelectedCore = core;
 
             // Act
-            bool success = powerPlant.AttachFragment(coreMock.Object, "Cooling", "C12", 200);
+            bool success = powerPlant.AttachFragment("Cooling", "C12", 200);
 
             // Assert
             Assert.IsTrue(success);
-            coreMock.Verify(c => c.AddFragment(It.IsAny<Fragment>()), Times.Once);
+            Assert.AreEqual(1, core.Fragments.Count);
         }
 
         [Test]
         public void AttachFragment_InvalidPressureAffection_ReturnsFalseAndDoesNotAttachFragment()
         {
             // Arrange
-            CoreService coreService = new CoreService();
-            var coreMock = new Mock<SystemCore>('A', (uint)2000, coreService);
-            coreMock.Setup(c => c.AddFragment(It.IsAny<Fragment>()));
-
-            LambdaCorePowerPlant powerPlant = new LambdaCorePowerPlant();
+            SystemCore core = new SystemCore('A', (uint)2000);
+            var powerPlant = new LambdaCorePowerPlant();
+            powerPlant.CurrentSelectedCore = core;
 
             // Act
-            bool result = powerPlant.AttachFragment(coreMock.Object, "Cooling", "C12", -200);
+            bool success = powerPlant.AttachFragment("Cooling", "C12", -200);
 
             // Assert
-            Assert.IsFalse(result);
-            coreMock.Verify(c => c.AddFragment(It.IsAny<Fragment>()), Times.Never);
+            Assert.IsFalse(success);
+            Assert.AreEqual(0, core.Fragments.Count);
         }
 
         [Test]
-        public void AttachFragment_CreateFragmentReturnsNull_ReturnsFalseAndDoesNotAttachFragment()
+        public void AttachFragment_FragmentCreationFails_ReturnsFalseAndDoesNotAttachFragment()
         {
             // Arrange
-            CoreService coreService = new CoreService();
-            var coreMock = new Mock<SystemCore>('A', (uint)2000, coreService);
-            coreMock.Setup(c => c.AddFragment(It.IsAny<Fragment>()));
+            SystemCore core = new SystemCore('A', (uint)2000);
+            var powerPlant = new LambdaCorePowerPlant();
+            powerPlant.CurrentSelectedCore = core;
 
-            LambdaCorePowerPlant powerPlant = new LambdaCorePowerPlant();
+            MethodInfo createFragmentMethod = typeof(LambdaCorePowerPlant).GetMethod("CreateFragment", BindingFlags.NonPublic | BindingFlags.Instance);
+            createFragmentMethod.Invoke(powerPlant, new object[] { "Cooling", "C12", -200 });
 
             // Act
-            bool result = powerPlant.AttachFragment(coreMock.Object, "a", "C12", 200);
+            bool success = powerPlant.AttachFragment("Cooling", "C12", -200);
 
             // Assert
-            Assert.IsFalse(result);
-            coreMock.Verify(c => c.AddFragment(It.IsAny<Fragment>()), Times.Never);
-            Assert.AreEqual(0, coreMock.Object.Fragments.Count);
+            Assert.IsFalse(success);
+            Assert.AreEqual(0, core.Fragments.Count);
         }
 
         [Test]
         public void DetachFragment_WithFragments_ReturnsTrueAndRemovesFragment()
         {
             // Arrange
-            CoreService coreService = new CoreService();
-            SystemCore systemCore = new SystemCore('A', (uint)2000, coreService);
+            SystemCore systemCore = new SystemCore('A', (uint)2000);
             NuclearFragment fragment = new NuclearFragment("N1", FragmentType.Nuclear, 100);
             systemCore.AddFragment(fragment);
 
@@ -206,8 +192,7 @@ namespace Lambda_Core.Tests
         public void DetachFragment_WithoutFragments_ReturnsFalse()
         {
             // Arrange
-            CoreService coreService = new CoreService();
-            var coreMock = new Mock<SystemCore>('A', (uint)2000, coreService);
+            var coreMock = new Mock<SystemCore>('A', (uint)2000);
 
             LambdaCorePowerPlant powerPlant = new LambdaCorePowerPlant();
 

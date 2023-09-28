@@ -2,8 +2,8 @@
 {
     public interface ICoreService
     {
-        bool AddFragment(Core core, Fragment fragment);
-        string IsCritical(Core core);
-        string ToString(Core core);
+        bool CreateCore(string type, int durability);
+        bool RemoveCore(string name);
+        bool SelectCore(string name);
     }
 }

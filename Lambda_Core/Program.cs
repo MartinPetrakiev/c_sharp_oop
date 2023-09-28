@@ -1,16 +1,10 @@
-﻿using Lambda_Core.Interfaces;
-using Lambda_Core.Services;
-
-namespace Lambda_Core
+﻿namespace Lambda_Core
 {
     class Program
     {
         public static void Main(string[] args) 
         {
             LambdaCorePowerPlant lambdaCore = new LambdaCorePowerPlant();
-
-            Core currentCore = null;
-            CoreService coreService = new CoreService();
 
             while (true)
             {
@@ -28,7 +22,6 @@ namespace Lambda_Core
                 switch (operation)
                 {
                     case "CreateCore":
-                        Core newCore = null;
                         string[] coreParams = commandArguments[1].Split('@');
 
                         string coreType = coreParams[1];
@@ -43,9 +36,9 @@ namespace Lambda_Core
                             break;
                         }
 
-                        success = lambdaCore.CreateCore(coreType, coreDurability, coreService, out newCore);
+                        success = lambdaCore.CreateCore(coreType, coreDurability);
 
-                        Console.WriteLine(success ? $"Successfully created Core {newCore.Name}!" : "Failed to create Core!");
+                        Console.WriteLine(success ? $"Successfully created Core {lambdaCore.CurrentSelectedCore.Name}!" : "Failed to create Core!");
                         break;
 
                     case "RemoveCore":
@@ -56,12 +49,12 @@ namespace Lambda_Core
 
                     case "SelectCore":
                         string coreNameToSelect = commandArguments[1].Substring(1);
-                        success = lambdaCore.SelectCore(coreNameToSelect, out currentCore);
+                        success = lambdaCore.SelectCore(coreNameToSelect);
                         Console.WriteLine(success ? $"Currently selected Core {coreNameToSelect}!" : $"Failed to select Core {coreNameToSelect}!");
                         break;
 
                     case "AttachFragment":
-                        if (currentCore == null)
+                        if (lambdaCore.CurrentSelectedCore == null)
                         {
                             Console.WriteLine("Failed to attach Fragment!");
                         }
@@ -81,30 +74,30 @@ namespace Lambda_Core
                                 break;
                             }
 
-                            success = lambdaCore.AttachFragment(currentCore, fragmentType, fragmentName, pressureAffection);
+                            success = lambdaCore.AttachFragment(fragmentType, fragmentName, pressureAffection);
 
                             Console.WriteLine(success
-                                ? $"Successfully attached Fragment {fragmentName} to Core {currentCore.Name}!"
+                                ? $"Successfully attached Fragment {fragmentName} to Core {lambdaCore.CurrentSelectedCore.Name}!"
                                 : "Failed to attach Fragment!");
                         }
                         break;
 
                     case "DetachFragment":
-                        if (currentCore == null)
+                        if (lambdaCore.CurrentSelectedCore == null)
                         {
                             Console.WriteLine("Failed to detach Fragment!");
                         }
                         else
                         {
-                            success = lambdaCore.DetachFragment(currentCore);
+                            success = lambdaCore.DetachFragment(lambdaCore.CurrentSelectedCore);
                             Console.WriteLine(success
-                                ? $"Successfully detached Fragment {currentCore.Fragments.Last().Name} from Core {currentCore.Name}!"
+                                ? $"Successfully detached Fragment {lambdaCore.CurrentSelectedCore.Fragments.Last().Name} from Core {lambdaCore.CurrentSelectedCore.Name}!"
                                 : "Failed to detach Fragment!");
                         }
                         break;
 
                     case "Status":
-                        Console.Write(lambdaCore.ToString());
+                        Console.Write(lambdaCore.GetStatus());
                         break;
                     default:
                         Console.WriteLine("Invalid command!");
