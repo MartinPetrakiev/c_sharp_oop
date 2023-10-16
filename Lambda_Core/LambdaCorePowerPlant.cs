@@ -1,5 +1,4 @@
 ﻿using Lambda_Core.Enumerators;
-using Lambda_Core.Dictionaries;
 using Lambda_Core.Interfaces;
 
 namespace Lambda_Core
@@ -7,13 +6,11 @@ namespace Lambda_Core
     public class LambdaCorePowerPlant : ICoreService, IFragmentService, IPowerPlantStatus
     {
         public List<Core> Cores { get; protected set; }
-        private PowerPlantDictionaries PowerPlantDictionaries { get; set; }
         public Core CurrentSelectedCore { get; set; }
 
         public LambdaCorePowerPlant() 
         { 
             this.Cores = new List<Core>();
-            this.PowerPlantDictionaries = new PowerPlantDictionaries();
         }
 
         public bool CreateCore(string type, int durability)
@@ -24,11 +21,14 @@ namespace Lambda_Core
             {
                 char coreName = (char)(this.Cores.Count + 'A');
                 Core newCore = this.HandleCoreCreation(coreName, type, durability);
+
+                if (newCore != null)
+                {
+                    success = true;
+                }
                    
                 this.Cores.Add(newCore);
                 this.CurrentSelectedCore = newCore;
-
-                success = true;
             }
 
             return success;
@@ -38,9 +38,12 @@ namespace Lambda_Core
         {
             Core newCore = null;
 
-            if (this.PowerPlantDictionaries.coreTypeMap.ContainsKey(type))
+            string className = type + "Core";
+
+            Type coreType = Type.GetType("Lambda_Core." + className);
+
+            if (coreType != null)
             {
-                Type coreType = this.PowerPlantDictionaries.coreTypeMap[type];
                 newCore = Activator.CreateInstance(coreType, coreName, (uint)durability) as Core;
             }
 
@@ -97,9 +100,12 @@ namespace Lambda_Core
         {
             Fragment newFragment = null;
 
-            if (pressureAffection >= 0 && this.PowerPlantDictionaries.fragmentTypeMap.ContainsKey(type))
+            string className = type + "Fragment";
+
+            Type fragmentType = Type.GetType("Lambda_Core." + className);
+
+            if (pressureAffection >= 0 && fragmentType != null)
             {
-                Type fragmentType = this.PowerPlantDictionaries.fragmentTypeMap[type];
                 newFragment = Activator.CreateInstance(fragmentType, name, Enum.Parse<FragmentType>(type), (uint)pressureAffection) as Fragment;
             }
 
