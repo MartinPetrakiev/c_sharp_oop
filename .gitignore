@@ -4,3 +4,8 @@
 */*.sln
 */*.csproj
 *.sln
+.vs/*
+*/.vs/*
+*/*/*.csproj
+*/*/bin/Debug/net6.0/*
+*/*/obj/*
